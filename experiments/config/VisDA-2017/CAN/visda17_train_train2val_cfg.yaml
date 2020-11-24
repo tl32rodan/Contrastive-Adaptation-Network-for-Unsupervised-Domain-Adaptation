@@ -32,5 +32,5 @@ TEST:
   BATCH_SIZE: 100
 
 EVAL_METRIC: "mean_accu"
-SAVE_DIR: "./experiments/ckpt"
+SAVE_DIR: "./experiments/ckpt/visda_1124"
 NUM_WORKERS: 8

@@ -4,3 +4,6 @@
 *pth
 *ckpt
 *.zip
+experiments/dataset/VisDA-2017/train
+experiments/dataset/VisDA-2017/validation
+experiments/dataset/toy_1
