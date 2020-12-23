@@ -231,9 +231,9 @@ class CANSolver(BaseSolver):
 
             # compute the cross-entropy loss
             ce_loss = self.CELoss(source_preds, source_gt)
-            ce_loss.backward()
+            #ce_loss.backward()
 
-            ce_loss_iter += ce_loss
+            ce_loss_iter += ce_loss.detach()
             loss += ce_loss
          
             if len(filtered_classes) > 0:
@@ -261,10 +261,12 @@ class CANSolver(BaseSolver):
                                source_nums_cls, target_nums_cls)[self.discrepancy_key]
 
                 cdd_loss *= self.opt.CDD.LOSS_WEIGHT
-                cdd_loss.backward()
+                #cdd_loss.backward()
 
-                cdd_loss_iter += cdd_loss
+                cdd_loss_iter += cdd_loss.detach()
                 loss += cdd_loss
+
+            loss.backward()			
 
             # update the network
             self.optimizer.step()

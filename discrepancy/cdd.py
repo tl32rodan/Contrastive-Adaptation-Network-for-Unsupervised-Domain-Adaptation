@@ -191,7 +191,6 @@ class CDD(object):
 
         kernel_dist_ss = torch.stack(kernel_dist_ss, dim=0)
         kernel_dist_tt = torch.stack(kernel_dist_tt, dim=0).transpose(1, 0)
-
         mmds = kernel_dist_ss + kernel_dist_tt - 2 * kernel_dist_st
         intra_mmds = torch.diag(mmds, 0)
         intra = torch.sum(intra_mmds) / self.num_classes
@@ -203,5 +202,11 @@ class CDD(object):
             inter_mmds = torch.masked_select(mmds, inter_mask)
             inter = torch.sum(inter_mmds) / (self.num_classes * (self.num_classes - 1))
 
-        cdd = intra if inter is None else intra - inter
+        cdd = intra if inter is None else intra - 0.1*inter
+        #if not self.intra_only:
+        #    print('intra = ',intra.item(),' ; inter = ', inter.item(), ' ; cdd = ',cdd.item())
+        #else:
+        #    print('cdd = ',cdd.item())
+            
+
         return {'cdd': cdd, 'intra': intra, 'inter': inter}

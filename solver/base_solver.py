@@ -6,6 +6,8 @@ from utils.utils import to_cuda, mean_accuracy, accuracy
 from torch import optim
 from math import ceil as ceil
 from config.config import cfg
+import numpy as np
+from sklearn.metrics import confusion_matrix
 
 class BaseSolver:
     def __init__(self, net, dataloader, bn_domain_map={}, resume=None, **kwargs):
@@ -189,13 +191,27 @@ class BaseSolver:
 
     def test(self):
         self.net.eval()
+        labels = np.arange(self.opt.DATASET.NUM_CLASSES)
+
         preds = []
         gts = []
+        cm = []
+
         for sample in iter(self.test_data['loader']):
             data, gt = to_cuda(sample['Img']), to_cuda(sample['Label'])
             logits = self.net(data)['logits']
+            pred = torch.max(logits, dim=1).indices
             preds += [logits]
             gts += [gt]
+            try:
+                cm += confusion_matrix(gt.cpu(), pred.cpu(), labels)
+            except:
+                cm = confusion_matrix(gt.cpu(), pred.cpu(), labels)
+
+        print('==================')
+        print('Confusion matrix:')
+        print(cm)
+        print('==================')
 
         preds = torch.cat(preds, dim=0)
         gts = torch.cat(gts, dim=0)
